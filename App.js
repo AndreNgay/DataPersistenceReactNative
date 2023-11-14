@@ -64,37 +64,64 @@ export default function App() {
 
  
   return (
-    <View style={styles.container}>
-      <TextInput placeholder="Enter text" onChangeText={(value) => {
-        setUserInput(value) 
-      }}/>
+<View style={styles.container}>
+  <TextInput
+    style={styles.input}
+    placeholder="Enter text"
+    onChangeText={(value) => setUserInput(value)}
+  />
 
-      <TouchableOpacity>
-        <Text onPress={addToDB}>Add to Database</Text>
-      </TouchableOpacity>
+  <TouchableOpacity style={styles.button} onPress={addToDB}>
+    <Text style={styles.buttonText}>Add to Database</Text>
+  </TouchableOpacity>
 
-      <FlatList 
-        data={fetchedData}
-        renderItem = {({item}) =>(
-          <View>
-            <Text>{item.description}</Text>
-            <TouchableOpacity>
-              <Text onPress={() => {
-                deleteFromDB(item.id)
-              }}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </View>
+  <FlatList
+    data={fetchedData}
+    renderItem={({ item }) => (
+      <View style={styles.listItem}>
+        <Text>{item.description}</Text>
+        <TouchableOpacity onPress={() => deleteFromDB(item.id)}>
+          <Text style={styles.deleteButton}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    )}
+  />
+</View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    padding: 16,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
     alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 5,
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  deleteButton: {
+    color: 'red',
   },
 });
+
