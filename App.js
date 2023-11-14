@@ -50,8 +50,19 @@ export default function App() {
 
   useEffect(() => {
     fetchFromDB();
-  }, [])
+  }, []);
 
+  const deleteFromDB = (id) => {
+    appRef.doc(id).delete()
+    .then(() => {
+      alert('Deleted')
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+ 
   return (
     <View style={styles.container}>
       <TextInput placeholder="Enter text" onChangeText={(value) => {
@@ -65,7 +76,14 @@ export default function App() {
       <FlatList 
         data={fetchedData}
         renderItem = {({item}) =>(
-          <Text>{item.description}</Text>
+          <View>
+            <Text>{item.description}</Text>
+            <TouchableOpacity>
+              <Text onPress={() => {
+                deleteFromDB(item.id)
+              }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
