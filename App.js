@@ -1,7 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-web';
+import { FlatList, TextInput, TouchableOpacity } from 'react-native-web';
 import { firebase } from './config';
 
 export default function App() {
@@ -20,23 +19,55 @@ export default function App() {
     if(!userInput) {
       alert('Empty fields');
     }
-    appRef.add(container)
-    .then(() => {
-      alert("wow you added somethin'");
-    }).catch((error) => {
-      console.log(error);
-    })
+    else {
+      appRef.add(container)
+      .then(() => {
+        alert("wow you added somethin'");
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
   }
+
+  const [fetchedData, setFetchedData] = useState([]);
+
+  const fetchFromDB = () => {
+    appRef.orderBy('createdAt', 'desc').onSnapshot(
+      querySnaphot => {
+        const dataContainer = []
+        querySnaphot.forEach((document) => {
+          const { createdAt, description } = document.data();
+          dataContainer.push({
+            id: document.id, 
+            createdAt, 
+            description
+          })
+          setFetchedData(dataContainer);
+        })
+      }
+    )
+  }
+
+  useEffect(() => {
+    fetchFromDB();
+  }, [])
 
   return (
     <View style={styles.container}>
       <TextInput placeholder="Enter text" onChangeText={(value) => {
-        setUserInput(value);
+        setUserInput(value) 
       }}/>
 
       <TouchableOpacity>
         <Text onPress={addToDB}>Add to Database</Text>
       </TouchableOpacity>
+
+      <FlatList 
+        data={fetchedData}
+        renderItem = {({item}) =>(
+          <Text>{item.description}</Text>
+        )}
+      />
     </View>
   );
 }
